@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>traceur转换器</title>
+</head>
+<body>
+	<!-- 加载Traceur编译器 -->
+	<script src="http://google.github.io/traceur-compiler/bin/traceur.js"
+	        type="text/javascript"></script>
+	<!-- 将Traceur编译器用于网页 -->
+	<script src="http://google.github.io/traceur-compiler/src/bootstrap.js"
+	        type="text/javascript"></script>
+	<!-- 打开实验选项，否则有些特性可能编译不成功 -->
+	<script>
+			//打开 chrome报错
+	        // traceur.options.experimental = true;
+	</script>
+	<!-- type = "module" -->
+	<script type="module">
+	  
+		/**
+		 * 函数的 参数默认值
+		 */
+		// function log(x, y = 'World') {
+		//   console.log(x, y);
+		// }
+		
+		/**
+		 * 箭头函数
+		 * @param  {[type]} x [description]
+		 * @param  {String} y [description]
+		 * @return {[type]}   [description]
+		 */
+		const log = (x ,y = 'w') => { console.log(x, y); };
+
+		log('Hello') 
+		log('Hello', 'China') 
+		log('Hello', '') 
+
+		// Iterator 
+		let generator = function* () {
+		  yield 1;
+		  yield* [2,3,4];
+		  yield 5;
+		};
+
+		var iterator = generator();
+
+		console.log(iterator.next().value) // { value: 1, done: false }
+		iterator.next() // { value: 2, done: false }
+		iterator.next() // { value: 3, done: false }
+		iterator.next() // { value: 4, done: false }
+		iterator.next() // { value: 5, done: false }
+		console.log(iterator.next().done)// { value: undefined, done: true }
+
+		// 
+		function* load() {
+			console.log(1);
+			yield setTimeout(function () {
+        console.log(2);
+				bbb.next();
+			}, 3000);
+			console.log(3);
+		}
+
+		var bbb = load();
+		bbb.next();
+
+		// 遍历器最简单的实现方法 Generator 函数
+		let obj = {
+		  * [Symbol.iterator]() {
+		    yield 'hello';
+		    yield 'world';
+		  }
+		};
+
+		for (let x of obj) {
+		  console.log(x);
+		}
+
+		//  for...of
+		const a = 'wangxiufang';
+		let arr = ['w', 'x', 'f'];
+		for(let s of a){
+			console.log(s);
+		}
+
+		for(let key of arr.entries()){
+			console.log(key);
+		}
+
+		// Generator
+		function* iterTree(tree) {
+		  if (Array.isArray(tree)) {
+		    for(let i=0; i < tree.length; i++) {
+		      yield* iterTree(tree[i]);
+		    }
+		  } else {
+		    yield tree;
+		  }
+		}
+
+		const tree = [ 'a', ['b', 'c'], ['d', 'e'] ];
+
+		for(let x of iterTree(tree)) {
+		  console.log(x);
+		}
+
+		// Promise 对象
+		var getJSON = function(url) {
+		  var promise = new Promise(function(resolve, reject){
+		    var client = new XMLHttpRequest();
+		    client.open("GET", url);
+		    client.onreadystatechange = handler;
+		    client.responseType = "json";
+		    client.setRequestHeader("Accept", "application/json");
+		    client.send();
+
+		    function handler() {
+		      if ( this.readyState !== 4 ) {
+		        return;
+		      }
+		      if (this.status === 200) {
+		        resolve(this.response);
+		      } else {
+		        reject(new Error(this.statusText));
+		      }
+		    };
+		  });
+
+		  return promise;
+		};
+
+		getJSON("../edu.json").then(function(json) {
+		  console.log('Contents: ' + json.id);
+		}, function(error) {
+		  console.error('出错了', error);
+		});
+
+
+		// Class
+		 // 立即执行Class 的实例
+		class wa {
+			constructor(x,y){
+				this.x = x;
+				this.y = y;
+			}
+
+			tos(){
+				console.log(x,y);
+			}
+		}
+
+		class wb extends wa{
+			constructor(x,y,c){
+				super(x,y);
+				this.c = c;
+			}
+
+			tov(){
+				console.log(x,y,c);
+			}
+		}
+
+		var wbb = new wb();
+		var waa = new wa();
+
+		window.wb = wb;
+		window.wa = wa;
+		window.wbb = wbb;
+		window.waa = waa;
+		</script>
+
+	
+
+	<!-- Module 
+	<script  type="module" src="es6.js"></script>
+	<script  type="module" src="test1.js"></script>
+	<script  type="module" src="test2.js"></script>-->
+
+</body>
+</html>
